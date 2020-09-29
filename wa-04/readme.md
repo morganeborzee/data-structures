@@ -1,6 +1,6 @@
 PART ONE:
 
-![Image of data modeling](https://github.com/morganeborzee/data-structures/blob/master/wa-04/IMG_2607.jpg)
+![Image of data modeling](https://github.com/morganeborzee/data-structures/blob/master/wa-04/data.png)
 
 In this part of the assignment I first replaces the credentials to connect to the RDS Postgres database and used .env to protect the password, then I created a table named aalocations with 3 columns.
 
