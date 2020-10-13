@@ -1,6 +1,8 @@
+Assignment 6
+
 In the first part of the exercise I used the SELECT method to select specific data from the table that I previously created.
 
-‘’’
+```
 const { Client } = require('pg');
 const cTable = require('console.table');
 const dotenv = require('dotenv');
@@ -30,13 +32,13 @@ client.query(thisQuery, (err, res) => {
     }
 });
 
-‘’’
+```
 
 ![Image of data modeling](https://github.com/morganeborzee/data-structures/blob/master/wa-06/images/query_1.png)
 
 In the second part of this exercise I used the Dynamo query function to retrieve the entries from 17 June 2019.
 
-‘’’
+```
 // npm install aws-sdk
 var AWS = require('aws-sdk');
 AWS.config = new AWS.Config();
@@ -62,7 +64,7 @@ dynamodb.query(params, function(err, data) {
         });
     }
 });
-‘’’
+```
 
 
 ![Image of data modeling](https://github.com/morganeborzee/data-structures/blob/master/wa-06/images/query_2.png)
