@@ -1,14 +1,11 @@
-PART ONE:
-Data modeling sketch for the AA meetings information.
+In the first part of the exercise I used the SELECT method to select specific data from the table that I previously created.
 
-![Image of data modeling](https://github.com/morganeborzee/data-structures/blob/master/wa-04/data.png)
-
-SECOND PART: In this part of the assignment I first replaces the credentials to connect to the RDS Postgres database and used .env to protect the password, then I created a table named aalocations with 3 columns.
-
-```
+‘’’
 const { Client } = require('pg');
+const cTable = require('console.table');
 const dotenv = require('dotenv');
 dotenv.config({path: '../.env'});
+
 
 // AWS RDS POSTGRESQL INSTANCE
 var db_credentials = new Object();
@@ -22,69 +19,51 @@ db_credentials.port = 5432;
 const client = new Client(db_credentials);
 client.connect();
 
-// Sample SQL statement to create a table: 
- var thisQuery = "CREATE TABLE aalocations (address varchar(125), lat double precision, long double precision);";
-// Sample SQL statement to delete a table: 
-// var thisQuery = "DROP TABLE aalocations;"; 
+// Sample SQL statement to query meetings on Monday that start on or after 7:00pm: HERE address = '232 West 11th Street
+var thisQuery = "SELECT address FROM aalocations WHERE address = '273 BOWERY New York NY ';"
 
 client.query(thisQuery, (err, res) => {
-    console.log(err, res);
-    client.end();
-});
-
-```
-After that I created a second .js file (b) and used the parse method to retrieve the information from the json object that I created for last week’s assignment. Then I used the async module and the method “eachSeries” to iterate and create each row by the total number of addresses. I had to use ‘E”’ in order to use comas in the address.
-
-```
-// AWS RDS POSTGRESQL INSTANCE
-var db_credentials = new Object();
-db_credentials.user = 'morgane';
-db_credentials.host = 'ds-20.chrshhmqz35r.us-east-1.rds.amazonaws.com';
-db_credentials.database = 'aa';
-db_credentials.password = process.env.AWSRDS_PW;
-db_credentials.port = 5432;
-
-var addressesForDb = JSON.parse(fs.readFileSync('../wa-03/data/first.json'));
-
-async.eachSeries(addressesForDb, function(value, callback) {
-    const client = new Client(db_credentials);
-    client.connect();
-    var thisQuery = "INSERT INTO aalocations VALUES (E'" + value[2].StreetAddress + "', " + value[0] + ", " + value[1] + ");";
-    client.query(thisQuery, (err, res) => {
-        console.log(err, res);
+    if (err) {throw err}
+    else {
+        console.table(res.rows);
         client.end();
-    });
-    setTimeout(callback, 1000); 
-}); 
-
-```
-Lastly I’m using the “SELECT * FROM” query to visualize the table with the information of the Json file that I included in the previous part.
-
-
-```
-const { Client } = require('pg');  
-const dotenv = require('dotenv');
-dotenv.config({path: '../.env'});
-
-// AWS RDS POSTGRESQL INSTANCE
-var db_credentials = new Object();
-db_credentials.user = 'morgane';
-db_credentials.host = 'ds-20.chrshhmqz35r.us-east-1.rds.amazonaws.com';
-db_credentials.database = 'aa';
-db_credentials.password = process.env.AWSRDS_PW;
-db_credentials.port = 5432;
-
-// Connect to the AWS RDS Postgres database
-const client = new Client(db_credentials);
-client.connect();
-
-// Sample SQL statement to query the entire contents of a table: 
-var thisQuery = "SELECT * FROM aalocations;";
-
-client.query(thisQuery, (err, res) => {
-    console.log(err, res.rows);
-    client.end();
+    }
 });
 
-```
+‘’’
+
+![Image of data modeling](https://github.com/morganeborzee/data-structures/blob/master/wa-06/images/query_1.png)
+
+In the second part of this exercise I used the Dynamo query function to retrieve the entries from 17 June 2019.
+
+‘’’
+// npm install aws-sdk
+var AWS = require('aws-sdk');
+AWS.config = new AWS.Config();
+AWS.config.region = "us-east-1";
+
+var dynamodb = new AWS.DynamoDB();
+
+var params = {
+    TableName : "processblog-20",
+    KeyConditionExpression: "pk = :theDate", // the query expression
+    ExpressionAttributeValues: { // the query values
+        ":theDate": {N: "20190617"}
+    }
+};
+
+dynamodb.query(params, function(err, data) {
+    if (err) {
+        console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
+    } else {
+        console.log("Query succeeded.");
+        data.Items.forEach(function(item) {
+            console.log("***** ***** ***** ***** ***** \n", item);
+        });
+    }
+});
+‘’’
+
+
+![Image of data modeling](https://github.com/morganeborzee/data-structures/blob/master/wa-06/images/query_2.png)
 
